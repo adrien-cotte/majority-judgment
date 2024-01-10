@@ -4,6 +4,7 @@
 
 * python 3.7+
 * matplotlib 3.4.2+
+* pandas 2.0+
 
 # usage
 
