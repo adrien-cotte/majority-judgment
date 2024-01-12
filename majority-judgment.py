@@ -79,21 +79,23 @@ def survey(results, category_names, title):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""
-    Generate a Majority Judgement bar chart from CSV data.
+Generate a Majority Judgement bar chart from CSV data.
 
-    Example of CSV file format:
+Example of CSV file format:
 
-        Q1,Q2,Q3
-        3,3,3
-        2,4,1
-        5,5,1
-        1,2,2""", formatter_class=RawTextHelpFormatter)
-    parser.add_argument('--csv', required=True, help='Path to the CSV file containing survey data.')
-    args = parser.add_argument('-t', '--title', default='', help='Title of the chart')
-    parser.add_argument('-l', '--lang', default='en', choices=['en', 'fr'], help='Change the language (default: "en")')
-    parser.add_argument('-C', '--categories', help="""override the categories list, ascending order
-    example:
-        majority-judgment.py --categories D C B A S""", nargs="*")
+    Q1,Q2,Q3
+    3,3,3
+    2,4,1
+    5,5,1
+    1,2,2""", formatter_class=RawTextHelpFormatter)
+    parser.add_argument('-c', '--csv', required=True, help='Path to the CSV file containing survey data.')
+    args = parser.add_argument('-t', '--title', default='', help='Title of the chart.')
+    parser.add_argument('-l', '--lang', default='en', choices=['en', 'fr'], help='Change the language. (default: "en")')
+    parser.add_argument('-C', '--categories', help="""Override the categories list. (ascending order)
+Examples of --categories option:
+    majority-judgment.py --categories D C B A S
+    majority-judgment.py -C "Too bad" "Bad" "Okay" "Good" "Very good"
+    """, nargs="*")
 
     args = parser.parse_args()
 
