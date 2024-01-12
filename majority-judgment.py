@@ -12,12 +12,22 @@ import argparse
 from argparse import RawTextHelpFormatter
 
 
-def read_and_aggregate_csv(file_path):
+def read_and_aggregate_csv(file_path, category_names):
     df = pd.read_csv(file_path)
+    max_count = len(category_names)
+
+    # Function to check if a value is out of the desired range
+    def is_out_of_range(x):
+        return not (1 <= x <= max_count)
+
+    # Check for any value out of range
+    if df.applymap(is_out_of_range).any().any():
+        print("Warning: There are values not between 1 and ", max_count)
+
     aggregated_results = {}
     for question in df.columns:
         counts = df[question].value_counts().sort_index()
-        for rating in range(1, 6):
+        for rating in range(1, max_count + 1):
             if rating not in counts:
                 counts[rating] = 0
         aggregated_results[question] = counts.sort_index().tolist()
@@ -107,5 +117,5 @@ Examples of --categories option:
     if args.categories is not None:
         category_names = args.categories
 
-    results = read_and_aggregate_csv(args.csv)
+    results = read_and_aggregate_csv(args.csv, category_names)
     survey(results, category_names, args.title)
