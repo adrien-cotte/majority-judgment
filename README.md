@@ -43,6 +43,7 @@ options:
                         Change the type of the categories values. (default: "int")
   -C [CATEGORIES ...], --categories [CATEGORIES ...]
                         Override the categories list. (ascending order)
+  -D, --disable-major   Remove major selection display.
 ```
 
 # Examples

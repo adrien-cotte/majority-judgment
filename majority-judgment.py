@@ -56,7 +56,7 @@ def read_and_aggregate_csv(file_path, category_names, values_type="int"):
     return aggregated_results
 
 
-def survey(results, category_names, title):
+def survey(results, category_names, title, display_major=True):
     labels = list(results.keys())
     data = np.array(list(results.values()))
     data_cum = data.cumsum(axis=1)
@@ -88,23 +88,33 @@ def survey(results, category_names, title):
                 ax.text(x, y, str(int(c)), ha="center", va="center", color="black")
 
     # Calculate and draw a line in the middle
+    if display_major:
+        medline_zorder = 0
+        medline_linewidth = 1
+        medline_linestyle = "dotted"
+    else:
+        medline_zorder = 1
+        medline_linewidth = 1.5
+        medline_linestyle = "-"
+
     for label in results.keys():
         total_responses = sum(results[label])
         median_response_count = total_responses / 2
         ax.axvline(
             x=median_response_count,
             color="black",
-            linestyle="dotted",
-            zorder=0,
-            linewidth=1,
+            linestyle=medline_linestyle,
+            zorder=medline_zorder,
+            linewidth=medline_linewidth,
         )
 
     # Create the legend
-    major_legend = mpatches.Patch(
-        facecolor="none", label="Major", edgecolor="darkgrey", linewidth=2
-    )
     handles = ax.get_legend_handles_labels()[0]
-    handles.append(major_legend)
+    if display_major:
+        major_legend = mpatches.Patch(
+            facecolor="none", label="Major", edgecolor="darkgrey", linewidth=2
+        )
+        handles.append(major_legend)
     plt.legend(
         handles=handles,
         ncol=len(category_names) + 1,
@@ -116,23 +126,24 @@ def survey(results, category_names, title):
     )
 
     # Calculate and highlight the winner for each question
-    for i, label in enumerate(labels):
-        responses = np.array(results[label])
-        cumulative_responses = np.cumsum(responses)
-        total_responses = cumulative_responses[-1]
-        median_index = np.where(cumulative_responses >= total_responses / 2)[0][0]
+    if display_major:
+        for i, label in enumerate(labels):
+            responses = np.array(results[label])
+            cumulative_responses = np.cumsum(responses)
+            total_responses = cumulative_responses[-1]
+            median_index = np.where(cumulative_responses >= total_responses / 2)[0][0]
 
-        # Highlighting the winning segment with a black border and no fill
-        left_sum = np.sum(responses[:median_index])
-        ax.barh(
-            i,
-            responses[median_index],
-            left=left_sum,
-            height=0.5,
-            color="none",
-            edgecolor="darkgrey",
-            linewidth=5,
-        )
+            # Highlighting the winning segment with a black border and no fill
+            left_sum = np.sum(responses[:median_index])
+            ax.barh(
+                i,
+                responses[median_index],
+                left=left_sum,
+                height=0.5,
+                color="none",
+                edgecolor="darkgrey",
+                linewidth=5,
+            )
 
     # Misc and plot
     ax.set_facecolor("lightgrey")
@@ -187,6 +198,13 @@ Examples of usages:
         help="""Override the categories list. (ascending order)""",
         nargs="*",
     )
+    parser.add_argument(
+        "-D",
+        "--disable-major",
+        help="""Remove major selection display.""",
+        action='store_true',
+        default=False
+    )
 
     args = parser.parse_args()
 
@@ -211,4 +229,4 @@ Examples of usages:
         category_names = args.categories
 
     results = read_and_aggregate_csv(args.csv, category_names, args.type)
-    survey(results, category_names, args.title)
+    survey(results, category_names, args.title, not args.disable_major)
