@@ -59,3 +59,9 @@ options:
 ```
 
 ![alt text](example_tier-list.png)
+
+```
+./majority-judgment.py --disable-major -c tier_list_lol.csv -T str -C D C B A S -t 'LoL 14.1 Tier List'
+```
+
+![alt text](example_tier_list_lol.png)
