@@ -89,10 +89,15 @@ if __name__ == "__main__":
         5,5,1
         1,2,2""", formatter_class=RawTextHelpFormatter)
     parser.add_argument('--csv', required=True, help='Path to the CSV file containing survey data.')
-    args = parser.add_argument('-t', '--title', default='Survey Results', help='Title of the chart')
+    args = parser.add_argument('-t', '--title', default='', help='Title of the chart')
+    parser.add_argument('-l', '--lang', default='en', choices=['en', 'fr'], help='Change the language (default: "en")')
 
     args = parser.parse_args()
 
-    category_names = ['Strongly disagree', 'Disagree', 'Neither agree nor disagree', 'Agree', 'Strongly agree']
+    if args.lang == "en":
+        category_names = ['Strongly disagree', 'Disagree', 'Neither agree nor disagree', 'Agree', 'Strongly agree']
+    elif args.lang == "fr":
+        category_names = ['Fort désaccord', 'Désaccord', 'Ni accord ni désaccord', 'D\'accord', 'Fortement d\'accord']
+
     results = read_and_aggregate_csv(args.csv)
     survey(results, category_names, args.title)
