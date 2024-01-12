@@ -23,7 +23,7 @@ def read_and_aggregate_csv(file_path, category_names, values_type="int"):
             return not (1 <= x <= max_count)
 
         # Check for any value out of range
-        if df.applymap(is_out_of_range).any().any():
+        if df.map(is_out_of_range).any().any():
             print("Warning: There are values not between 1 and", max_count)
 
     elif values_type == "str":
@@ -35,7 +35,7 @@ def read_and_aggregate_csv(file_path, category_names, values_type="int"):
             return not (x in category_names_set)
 
         # Check for any value out of category
-        if df.applymap(is_out_of_category).any().any():
+        if df.map(is_out_of_category).any().any():
             print("Warning: There are values not in", category_names)
     else:
         raise Exception(
