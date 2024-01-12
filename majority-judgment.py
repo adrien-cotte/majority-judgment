@@ -12,27 +12,46 @@ import argparse
 from argparse import RawTextHelpFormatter
 
 
-def read_and_aggregate_csv(file_path, category_names):
+import pandas as pd
+
+# Supported values_type : 'int' or 'str'
+def read_and_aggregate_csv(file_path, category_names, values_type='int'):
     df = pd.read_csv(file_path)
     max_count = len(category_names)
 
-    # Function to check if a value is out of the desired range
-    def is_out_of_range(x):
-        return not (1 <= x <= max_count)
+    if values_type == 'int':
+        # Function to check if a value is out of the desired range
+        def is_out_of_range(x):
+            return not (1 <= x <= max_count)
 
-    # Check for any value out of range
-    if df.applymap(is_out_of_range).any().any():
-        print("Warning: There are values not between 1 and ", max_count)
+        # Check for any value out of range
+        if df.applymap(is_out_of_range).any().any():
+            print("Warning: There are values not between 1 and", max_count)
+
+    elif values_type == 'str':
+        # Convert category names to a set for efficient lookup
+        category_names_set = set(category_names)
+
+        # Function to check if a value is out of the desired categories
+        def is_out_of_category(x):
+            return not (x in category_names_set)
+
+        # Check for any value out of category
+        if df.applymap(is_out_of_category).any().any():
+            print("Warning: There are values not in", category_names)
+    else:
+        raise Exception("values_type='" + values_type +"' is not supported, try 'int' or 'str'")
 
     aggregated_results = {}
     for question in df.columns:
-        counts = df[question].value_counts().sort_index()
+        # Adjust to map category names to their indices
+        mapped_df = df[question].replace({name: i+1 for i, name in enumerate(category_names)})
+        counts = mapped_df.value_counts().sort_index()
         for rating in range(1, max_count + 1):
             if rating not in counts:
                 counts[rating] = 0
         aggregated_results[question] = counts.sort_index().tolist()
     return aggregated_results
-
 
 def survey(results, category_names, title):
     labels = list(results.keys())
@@ -101,11 +120,13 @@ Example of CSV file format:
     parser.add_argument('-c', '--csv', required=True, help='Path to the CSV file containing survey data.')
     args = parser.add_argument('-t', '--title', default='', help='Title of the chart.')
     parser.add_argument('-l', '--lang', default='en', choices=['en', 'fr'], help='Change the language. (default: "en")')
+    parser.add_argument('-T', '--type', default='int', choices=['int', 'str'], help='Change the type of the categories values. (default: "int")')
     parser.add_argument('-C', '--categories', help="""Override the categories list. (ascending order)
 Examples of --categories option:
     ./majority-judgment.py --categories D C B A S
     ./majority-judgment.py -C "Too bad" "Bad" "Okay" "Good" "Very good"
     """, nargs="*")
+
 
     args = parser.parse_args()
 
@@ -117,5 +138,5 @@ Examples of --categories option:
     if args.categories is not None:
         category_names = args.categories
 
-    results = read_and_aggregate_csv(args.csv, category_names)
+    results = read_and_aggregate_csv(args.csv, category_names, args.type)
     survey(results, category_names, args.title)
