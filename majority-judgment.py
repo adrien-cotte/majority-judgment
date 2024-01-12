@@ -9,6 +9,7 @@ import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 import argparse
+from argparse import RawTextHelpFormatter
 
 
 def read_and_aggregate_csv(file_path):
@@ -77,7 +78,16 @@ def survey(results, category_names, title):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Generate a horizontal bar chart from CSV data.')
+    parser = argparse.ArgumentParser(description="""
+    Generate a Majority Judgement bar chart from CSV data.
+
+    Example of CSV file format:
+
+        Q1,Q2,Q3
+        3,3,3
+        2,4,1
+        5,5,1
+        1,2,2""", formatter_class=RawTextHelpFormatter)
     parser.add_argument('--csv', required=True, help='Path to the CSV file containing survey data.')
     args = parser.add_argument('-t', '--title', default='Survey Results', help='Title of the chart')
 
