@@ -1,9 +1,9 @@
-# Majority Judgement
+# Majority Judgment
 
-This Python script is designed to create Majority Judgement graphs, providing a
+This Python script is designed to create Majority Judgment graphs, providing a
 visual representation of collective decision-making outcomes.
 
-For more informations about Majority Judgement: https://en.wikipedia.org/wiki/Majority_judgment
+For more informations about Majority Judgment: https://en.wikipedia.org/wiki/Majority_judgment
 
 # Requirements
 
@@ -16,7 +16,7 @@ For more informations about Majority Judgement: https://en.wikipedia.org/wiki/Ma
 ```
 usage: majority-judgment.py [-h] -c CSV [-t TITLE] [-l {en,fr}] [-C [CATEGORIES ...]]
 
-Generate a Majority Judgement bar chart from CSV data.
+Generate a Majority Judgment bar chart from CSV data.
 
 Example of CSV file format:
 
@@ -36,14 +36,14 @@ options:
   -C [CATEGORIES ...], --categories [CATEGORIES ...]
                         Override the categories list. (ascending order)
                         Examples of --categories option:
-                            majority-judgment.py --categories D C B A S
-                            majority-judgment.py -C "Too bad" "Bad" "Okay" "Good" "Very good"
+                            ./majority-judgment.py --categories D C B A S
+                            ./majority-judgment.py -C "Too bad" "Bad" "Okay" "Good" "Very good"
 ```
 
 # Example
 
 ```
-./majority-judgment.py -t Restaurants -c resto.csv
+./majority-judgment.py -t "Restaurants for lunch" -c resto.csv
 ```
 
 ![alt text](example.png)

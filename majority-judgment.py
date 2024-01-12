@@ -79,7 +79,7 @@ def survey(results, category_names, title):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="""
-Generate a Majority Judgement bar chart from CSV data.
+Generate a Majority Judgment bar chart from CSV data.
 
 Example of CSV file format:
 
@@ -93,8 +93,8 @@ Example of CSV file format:
     parser.add_argument('-l', '--lang', default='en', choices=['en', 'fr'], help='Change the language. (default: "en")')
     parser.add_argument('-C', '--categories', help="""Override the categories list. (ascending order)
 Examples of --categories option:
-    majority-judgment.py --categories D C B A S
-    majority-judgment.py -C "Too bad" "Bad" "Okay" "Good" "Very good"
+    ./majority-judgment.py --categories D C B A S
+    ./majority-judgment.py -C "Too bad" "Bad" "Okay" "Good" "Very good"
     """, nargs="*")
 
     args = parser.parse_args()
