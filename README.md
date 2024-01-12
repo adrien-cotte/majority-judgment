@@ -14,17 +14,23 @@ For more informations about Majority Judgment: https://en.wikipedia.org/wiki/Maj
 # Usage
 
 ```
-usage: majority-judgment.py [-h] -c CSV [-t TITLE] [-l {en,fr}] [-C [CATEGORIES ...]]
+usage: majority-judgment.py [-h] -c CSV [-t TITLE] [-l {en,fr}] [-T {int,str}] [-C [CATEGORIES ...]]
 
 Generate a Majority Judgment bar chart from CSV data.
 
-Example of CSV file format:
+Examples of CSV files formats:
 
-    Q1,Q2,Q3
-    3,3,3
-    2,4,1
-    5,5,1
-    1,2,2
+    Q1,Q2,Q3    Q1,Q2,Q3
+    3,3,3       C,C,C
+    2,4,1       D,B,E
+    5,5,1       A,A,E
+    1,2,2       E,D,D
+
+Examples of usages:
+    ./majority-judgment.py -c resto.csv
+    ./majority-judgment.py -c resto.csv -l fr -t 'Restaurants'
+    ./majority-judgment.py -c resto.csv -C 'Too bad' 'Bad' 'Okay' 'Good' 'Very good'
+    ./majority-judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'
 
 options:
   -h, --help            show this help message and exit
@@ -33,17 +39,22 @@ options:
                         Title of the chart.
   -l {en,fr}, --lang {en,fr}
                         Change the language. (default: "en")
+  -T {int,str}, --type {int,str}
+                        Change the type of the categories values. (default: "int")
   -C [CATEGORIES ...], --categories [CATEGORIES ...]
                         Override the categories list. (ascending order)
-                        Examples of --categories option:
-                            ./majority-judgment.py --categories D C B A S
-                            ./majority-judgment.py -C "Too bad" "Bad" "Okay" "Good" "Very good"
 ```
 
-# Example
+# Examples
 
 ```
 ./majority-judgment.py -t "Restaurants for lunch" -c resto.csv
 ```
 
-![alt text](example.png)
+![alt text](example_resto.png)
+
+```
+./majority-judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'
+```
+
+![alt text](example_tier-list.png)
