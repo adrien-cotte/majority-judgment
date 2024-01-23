@@ -53,16 +53,16 @@ options:
 ./majority_judgment.py -t "Restaurants for lunch" -c resto.csv
 ```
 
-![alt text](example_resto.png)
+![alt text](examples/example_resto.png)
 
 ```
 ./majority_judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'
 ```
 
-![alt text](example_tier-list.png)
+![alt text](examples/example_tier-list.png)
 
 ```
 ./majority_judgment.py --disable-major -c tier_list_lol.csv -T str -C D C B A S -t 'LoL 14.1 Tier List'
 ```
 
-![alt text](example_tier_list_lol.png)
+![alt text](examples/example_tier_list_lol.png)
