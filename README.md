@@ -35,6 +35,7 @@ Examples of usages:
 options:
   -h, --help            show this help message and exit
   -c CSV, --csv CSV     Path to the CSV file containing survey data.
+  -p, --png             Write a PNG file instead of plotting results.
   -t TITLE, --title TITLE
                         Title of the chart.
   -l {en,fr}, --lang {en,fr}

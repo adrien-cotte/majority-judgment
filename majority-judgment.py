@@ -56,7 +56,7 @@ def read_and_aggregate_csv(file_path, category_names, values_type="int"):
     return aggregated_results
 
 
-def survey(results, category_names, title, display_major=True):
+def survey(results, category_names, title, display_major=True, plot=True):
     labels = list(results.keys())
     data = np.array(list(results.values()))
     data_cum = data.cumsum(axis=1)
@@ -148,7 +148,16 @@ def survey(results, category_names, title, display_major=True):
     # Misc and plot
     ax.set_facecolor("lightgrey")
     plt.title(title, x=0.5, y=1.05, weight="bold")
-    plt.show()
+
+    if plot:
+        plt.show()
+    else:
+        if title == "":
+            png_name = "plot.png"
+        else:
+            png_name = title + ".png"
+        # Save the figure as a PNG file
+        plt.savefig(png_name, dpi=300)
 
 
 if __name__ == "__main__":
@@ -176,6 +185,13 @@ Examples of usages:
         "--csv",
         required=True,
         help="Path to the CSV file containing survey data.",
+    )
+    parser.add_argument(
+        "-p",
+        "--png",
+        action='store_true',
+        default=False,
+        help="Write a PNG file instead of plotting results.",
     )
     parser.add_argument("-t", "--title", default="", help="Title of the chart.")
     parser.add_argument(
@@ -228,5 +244,10 @@ Examples of usages:
     if args.categories is not None:
         category_names = args.categories
 
+    if args.png:
+        plot = False
+    else:
+        plot = True
+
     results = read_and_aggregate_csv(args.csv, category_names, args.type)
-    survey(results, category_names, args.title, not args.disable_major)
+    survey(results, category_names, args.title, not args.disable_major, plot)
