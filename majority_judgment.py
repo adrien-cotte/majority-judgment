@@ -174,10 +174,10 @@ Examples of CSV files formats:
     1,2,2       E,D,D
 
 Examples of usages:
-    ./majority-judgment.py -c resto.csv
-    ./majority-judgment.py -c resto.csv -l fr -t 'Restaurants'
-    ./majority-judgment.py -c resto.csv -C 'Too bad' 'Bad' 'Okay' 'Good' 'Very good'
-    ./majority-judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'""",
+    ./majority_judgment.py -c resto.csv
+    ./majority_judgment.py -c resto.csv -l fr -t 'Restaurants'
+    ./majority_judgment.py -c resto.csv -C 'Too bad' 'Bad' 'Okay' 'Good' 'Very good'
+    ./majority_judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'""",
         formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(

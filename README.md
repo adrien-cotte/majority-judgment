@@ -14,7 +14,7 @@ For more informations about Majority Judgment: https://en.wikipedia.org/wiki/Maj
 # Usage
 
 ```
-usage: majority-judgment.py [-h] -c CSV [-t TITLE] [-l {en,fr}] [-T {int,str}] [-C [CATEGORIES ...]]
+usage: majority_judgment.py [-h] -c CSV [-t TITLE] [-l {en,fr}] [-T {int,str}] [-C [CATEGORIES ...]]
 
 Generate a Majority Judgment bar chart from CSV data.
 
@@ -27,10 +27,10 @@ Examples of CSV files formats:
     1,2,2       E,D,D
 
 Examples of usages:
-    ./majority-judgment.py -c resto.csv
-    ./majority-judgment.py -c resto.csv -l fr -t 'Restaurants'
-    ./majority-judgment.py -c resto.csv -C 'Too bad' 'Bad' 'Okay' 'Good' 'Very good'
-    ./majority-judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'
+    ./majority_judgment.py -c resto.csv
+    ./majority_judgment.py -c resto.csv -l fr -t 'Restaurants'
+    ./majority_judgment.py -c resto.csv -C 'Too bad' 'Bad' 'Okay' 'Good' 'Very good'
+    ./majority_judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'
 
 options:
   -h, --help            show this help message and exit
@@ -50,19 +50,19 @@ options:
 # Examples
 
 ```
-./majority-judgment.py -t "Restaurants for lunch" -c resto.csv
+./majority_judgment.py -t "Restaurants for lunch" -c resto.csv
 ```
 
 ![alt text](example_resto.png)
 
 ```
-./majority-judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'
+./majority_judgment.py -c tier-list.csv -C B- B+ A- A+ S SS -T str -t 'Tier List'
 ```
 
 ![alt text](example_tier-list.png)
 
 ```
-./majority-judgment.py --disable-major -c tier_list_lol.csv -T str -C D C B A S -t 'LoL 14.1 Tier List'
+./majority_judgment.py --disable-major -c tier_list_lol.csv -T str -C D C B A S -t 'LoL 14.1 Tier List'
 ```
 
 ![alt text](example_tier_list_lol.png)
