@@ -5,11 +5,14 @@ visual representation of collective decision-making outcomes.
 
 For more informations about Majority Judgment: https://en.wikipedia.org/wiki/Majority_judgment
 
+For instructions and details on using this with a **Discord Bot**, please refer to the [README](discord-bot/README.md) in the `discord-bot` directory.
+
 # Requirements
 
 * python 3.7+
 * matplotlib 3.4.2+
 * pandas 2.0+
+* disnake 2.9+ (optional)
 
 # Usage
 
