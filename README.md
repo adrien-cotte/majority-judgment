@@ -1,4 +1,5 @@
 # Majority Judgment
+<img src="img/logo.png" alt="Logo" width="100"/>
 
 This Python script is designed to create Majority Judgment graphs, providing a
 visual representation of collective decision-making outcomes.

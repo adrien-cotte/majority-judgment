@@ -1,5 +1,7 @@
 # Major Bot for Discord
 
+<img src="../img/logo.png" alt="Logo" width="100"/>
+
 This is a Discord bot script, `major_bot.py`, designed to interact with specific guilds on 
 Discord. The bot is built using the `disnake` library, a fork of `discord.py` that adds 
 support for Discord's interactions API.
