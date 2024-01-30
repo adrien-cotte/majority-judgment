@@ -34,6 +34,10 @@ RESULTS = {}
 #   custom_id => "button_" + GRADES[i] + "_" + str(user) + "_" + choice
 BUTTONS = {}
 
+# Validations storage allow a global button deactivation
+# Keep in memory [user1, user2 ...]
+VALIDATIONS = []
+
 # Configure logging with date and time
 logging.basicConfig(
     level=logging.INFO,
@@ -63,6 +67,7 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
     global QUESTION
     global CHOICES
 
+    user = inter.author.id
     user_name = inter.author.name
     logging.info("User %s launched /major_create [%s] [%s]", user_name, question, choices)
 
@@ -76,20 +81,42 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
     QUESTION = question
     CHOICES = [x.strip() for x in choices.split(';')]
     participate_button = disnake.ui.Button(label=QUESTION, style=disnake.ButtonStyle.primary, custom_id="participate")
+    reset_button = disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.secondary,
+                      custom_id="button_reset_" + str(user))
     await inter.response.send_message("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
-            components=[participate_button])
+            components=[participate_button, reset_button])
 
 @bot.listen("on_button_click")
 async def major_update(inter: disnake.MessageInteraction):
     global QUESTION
     global CHOICES
     global RESULTS
+    global VALIDATIONS
     user = inter.author.id
     user_name = inter.author.name
 
+    # Validate button, disable any interaction
+    if user in VALIDATIONS:
+        return
+    if inter.component.custom_id == "button_validate_" + str(user):
+        logging.info("User %s clicked on validate '%s' button", user_name, QUESTION)
+        VALIDATIONS.append(user)
+        await inter.response.send_message("@" + user_name + " a validé ses choix!")
+        return
+
+    # Reset button, remove results from user
+    if inter.component.custom_id == "button_reset_" + str(user):
+        logging.info("User %s clicked on reset '%s' button", user_name, QUESTION)
+        if user not in RESULTS:
+            # The user clicked on reset button but never have make any choice, just ignore
+            return
+        else:
+            del RESULTS[user]
+
     # Init at participation button click
-    if inter.component.custom_id == "participate":
-        logging.info("User %s clicked on '%s' participation button", user_name, QUESTION)
+    if (inter.component.custom_id == "participate"
+            or inter.component.custom_id == "button_reset_" + str(user)):
+        logging.info("User %s asks for '%s' participation", user_name, QUESTION)
         if user not in RESULTS:
             logging.info("User %s is participating to '%s'", user_name, QUESTION)
             RESULTS[user] = {}
@@ -127,8 +154,14 @@ async def major_update(inter: disnake.MessageInteraction):
                     except:
                         logging.info("User %s has finished '%s'", user_name, QUESTION)
                         await inter.response.send_message(
-                            "Vous avez répondu à toutes les questions, merci pour votre participation !\n\n Résume de vos choix :\n" + str(RESULTS[user]),
-                            ephemeral=True
+                            "Vous avez répondu à toutes les questions, merci pour votre participation !\n\n Résume de vos choix :\n"
+                            + str(RESULTS[user])
+                            + "\n\nVoulez-vous valider vos choix ou recommencer le jugement majoritaire ?",
+                            ephemeral=True,
+                            components=[disnake.ui.Button(label="Valider", style=disnake.ButtonStyle.success,
+                                            custom_id="button_validate_" + str(user)),
+                                       disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.primary,
+                                            custom_id="button_reset_" + str(user))]
                         )
                         return
             break  # do not continue, break loop for the next "choice"
@@ -188,6 +221,7 @@ async def major_delete(inter: disnake.ApplicationCommandInteraction):
     global CHOICES
     global RESULTS
     global BUTTONS
+    global VALIDATIONS
     user_name = inter.author.name
     logging.info("'%s' has been reset by user %s", QUESTION, user_name)
     OPENED = False
@@ -196,6 +230,7 @@ async def major_delete(inter: disnake.ApplicationCommandInteraction):
     CHOICES = []
     RESULTS = {}
     BUTTONS = {}
+    VALIDATIONS = []
     await inter.response.send_message("INFO: Vous avez supprimé le Jugement Majoritaire intitulé : " + prev_question,
                                       ephemeral=True)
 
