@@ -17,6 +17,7 @@ import logging
 import majority_judgment as mj
 import csv
 import uuid
+import re
 
 # One only MJ opened allowed (for now)
 OPENED = False
@@ -87,7 +88,7 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
         await inter.response.send_message("Err: Tous les choix doivent être différents !\n" + "choices: " + str(_choices), ephemeral=True)
         return
 
-    QUESTION = question
+    QUESTION = re.sub(r'\W', '_', question)
     CHOICES = _choices
     UUID = uuid.uuid4()
     OPENED = True
