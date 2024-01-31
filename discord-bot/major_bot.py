@@ -111,7 +111,16 @@ async def major_update(inter: disnake.MessageInteraction):
     # Validate button, disable any interaction
     if user in VALIDATIONS:
         return
+
+    # Validation button scope
     if inter.component.custom_id == str(UUID) + "button_validate_" + str(user):
+
+        # Do not allow Validation if results are not done
+        # could happen if a user click on reset then validate
+        for choice in CHOICES:
+            if RESULTS[user][choice] == None:
+                return
+
         logging.info("User %s clicked on validate '%s' button", user_name, QUESTION)
         VALIDATIONS.append(user)
         await inter.response.send_message("@" + user_name + " a validé ses choix!")
