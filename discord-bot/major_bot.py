@@ -158,8 +158,12 @@ async def major_update(inter: disnake.MessageInteraction):
     # Ignore if the user already have all results
     results_are_done = True
     for choice in CHOICES:
-        if RESULTS[user][choice] is None:
-            results_are_done = False
+        try:
+            if RESULTS[user][choice] is None:
+                results_are_done = False
+        except KeyError:
+            logging.error("User tried %s an invalid RESULTS[%s][%s] call, maybe he clicked on an old button?", user_name, user, choice)
+            return
     if results_are_done:
         return
 
