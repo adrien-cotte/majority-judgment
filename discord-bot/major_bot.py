@@ -80,15 +80,22 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
         await inter.response.send_message(
             "Err: Il y a déjà un jugement majoritaire en cours, lancez `/major_delete` pour l'arrêter.", ephemeral=True)
         return
-    else:
-        OPENED = True
-        UUID = uuid.uuid4()
+
+    # Choices unique verification
+    _choices = [x.strip() for x in choices.split(';')]
+    if len(_choices) != len(set(_choices)):
+        await inter.response.send_message("Err: Tous les choix doivent être différents !\n" + "choices: " + str(_choices), ephemeral=True)
+        return
 
     QUESTION = question
-    CHOICES = [x.strip() for x in choices.split(';')]
+    CHOICES = _choices
+    UUID = uuid.uuid4()
+    OPENED = True
+
     participate_button = disnake.ui.Button(label=QUESTION, style=disnake.ButtonStyle.primary, custom_id=str(UUID) + "participate")
     reset_button = disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.secondary,
                       custom_id=str(UUID) + "button_reset_" + str(user))
+
     await inter.response.send_message("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
             components=[participate_button, reset_button])
 
