@@ -16,9 +16,13 @@ from disnake.ext import commands
 import logging
 import majority_judgment as mj
 import csv
+import uuid
 
 # One only MJ opened allowed (for now)
 OPENED = False
+
+# Unique ID for any new question
+UUID = uuid.uuid4()
 
 # Keep questions, choices and grades in global scope
 QUESTION = ""
@@ -31,7 +35,7 @@ RESULTS = {}
 
 # Unfortunately Discord API do not separate buttons per user, so you have to keep
 # in memory any button depending on user, 'custom_id' is defined as follows:
-#   custom_id => "button_" + GRADES[i] + "_" + str(user) + "_" + choice
+#   custom_id => str(UUID) + "button_" + GRADES[i] + "_" + str(user) + "_" + choice
 BUTTONS = {}
 
 # Validations storage allow a global button deactivation
@@ -66,6 +70,7 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
     global OPENED
     global QUESTION
     global CHOICES
+    global UUID
 
     user = inter.author.id
     user_name = inter.author.name
@@ -77,12 +82,13 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
         return
     else:
         OPENED = True
+        UUID = uuid.uuid4()
 
     QUESTION = question
     CHOICES = [x.strip() for x in choices.split(';')]
-    participate_button = disnake.ui.Button(label=QUESTION, style=disnake.ButtonStyle.primary, custom_id="participate")
+    participate_button = disnake.ui.Button(label=QUESTION, style=disnake.ButtonStyle.primary, custom_id=str(UUID) + "participate")
     reset_button = disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.secondary,
-                      custom_id="button_reset_" + str(user))
+                      custom_id=str(UUID) + "button_reset_" + str(user))
     await inter.response.send_message("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
             components=[participate_button, reset_button])
 
@@ -98,14 +104,14 @@ async def major_update(inter: disnake.MessageInteraction):
     # Validate button, disable any interaction
     if user in VALIDATIONS:
         return
-    if inter.component.custom_id == "button_validate_" + str(user):
+    if inter.component.custom_id == str(UUID) + "button_validate_" + str(user):
         logging.info("User %s clicked on validate '%s' button", user_name, QUESTION)
         VALIDATIONS.append(user)
         await inter.response.send_message("@" + user_name + " a validé ses choix!")
         return
 
     # Reset button, remove results from user
-    if inter.component.custom_id == "button_reset_" + str(user):
+    if inter.component.custom_id == str(UUID) + "button_reset_" + str(user):
         logging.info("User %s clicked on reset '%s' button", user_name, QUESTION)
         if user not in RESULTS:
             # The user clicked on reset button but never have make any choice, just ignore
@@ -114,8 +120,8 @@ async def major_update(inter: disnake.MessageInteraction):
             del RESULTS[user]
 
     # Init at participation button click
-    if (inter.component.custom_id == "participate"
-            or inter.component.custom_id == "button_reset_" + str(user)):
+    if (inter.component.custom_id == str(UUID) + "participate"
+            or inter.component.custom_id == str(UUID) + "button_reset_" + str(user)):
         logging.info("User %s asks for '%s' participation", user_name, QUESTION)
         if user not in RESULTS:
             logging.info("User %s is participating to '%s'", user_name, QUESTION)
@@ -127,7 +133,7 @@ async def major_update(inter: disnake.MessageInteraction):
                 for i in range(0, 5):
                     BUTTONS[user][choice].append(
                         disnake.ui.Button(label=GRADES[i], style=disnake.ButtonStyle.secondary,
-                            custom_id="button_" + GRADES[i] + "_" + str(user) + "_" + choice)
+                            custom_id=str(UUID) + "button_" + GRADES[i] + "_" + str(user) + "_" + choice)
                     )
         else:
             # Ignore if the user click again on participation button
@@ -147,7 +153,7 @@ async def major_update(inter: disnake.MessageInteraction):
         next_choice = choice
         if RESULTS[user][choice] is None:
             for i in range(0, 5):
-                if inter.component.custom_id == "button_" + GRADES[i] + "_" + str(user) + "_" + choice:
+                if inter.component.custom_id == str(UUID) + "button_" + GRADES[i] + "_" + str(user) + "_" + choice:
                     RESULTS[user][choice] = GRADES[i]
                     try:
                         next_choice = CHOICES[c_index + 1]
@@ -159,9 +165,9 @@ async def major_update(inter: disnake.MessageInteraction):
                             + "\n\nVoulez-vous valider vos choix ou recommencer le jugement majoritaire ?",
                             ephemeral=True,
                             components=[disnake.ui.Button(label="Valider", style=disnake.ButtonStyle.success,
-                                            custom_id="button_validate_" + str(user)),
+                                            custom_id=str(UUID) + "button_validate_" + str(user)),
                                        disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.primary,
-                                            custom_id="button_reset_" + str(user))]
+                                            custom_id=str(UUID) + "button_reset_" + str(user))]
                         )
                         return
             break  # do not continue, break loop for the next "choice"
