@@ -88,7 +88,7 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
         await inter.response.send_message("Err: Tous les choix doivent être différents !\n" + "choices: " + str(_choices), ephemeral=True)
         return
 
-    QUESTION = re.sub(r'\W', '_', question)
+    QUESTION = question
     CHOICES = _choices
     UUID = uuid.uuid4()
     OPENED = True
@@ -238,8 +238,10 @@ async def major_display(inter):
     csv_file = "major_bot.csv"
     dict_to_csv(RESULTS, csv_file)
     results = mj.read_and_aggregate_csv(csv_file, category_names=GRADES, values_type='str')
+    # Remove special chars for Windows files
+    png_file = re.sub(r'\W', '_', QUESTION) + '.png'
     mj.survey(results, category_names=GRADES, title=QUESTION, plot=False, display_major=False)
-    await inter.send(file=disnake.File(QUESTION + '.png'))
+    await inter.send(file=disnake.File(png_file))
     logging.info("'%s' displayed by user %s", QUESTION, user_name)
 
 @bot.slash_command(description="Suppression du jugement courant")

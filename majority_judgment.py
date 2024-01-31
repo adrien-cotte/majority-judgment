@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import argparse
 from argparse import RawTextHelpFormatter
+import re
 
 
 # Supported values_type : 'int' or 'str'
@@ -155,7 +156,8 @@ def survey(results, category_names, title, display_major=True, plot=True):
         if title == "":
             png_name = "plot.png"
         else:
-            png_name = title + ".png"
+            # Remove special chars for Windows files
+            png_name = re.sub(r'\W', '_', title) + ".png"
         # Save the figure as a PNG file
         plt.savefig(png_name, dpi=300)
 
