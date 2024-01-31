@@ -161,8 +161,9 @@ async def major_update(inter: disnake.MessageInteraction):
                         logging.info("User %s has finished '%s'", user_name, QUESTION)
                         await inter.response.send_message(
                             "Vous avez répondu à toutes les questions, merci pour votre participation !\n\n Résume de vos choix :\n"
-                            + str(RESULTS[user])
-                            + "\n\nVoulez-vous valider vos choix ou recommencer le jugement majoritaire ?",
+                            + str(RESULTS[user]) + "\n"
+                            + "\nCommande pour afficher les résultats : **/major_display**\n"
+                            + "\nVoulez-vous valider vos choix ou recommencer le jugement majoritaire ?",
                             ephemeral=True,
                             components=[disnake.ui.Button(label="Valider", style=disnake.ButtonStyle.success,
                                             custom_id=str(UUID) + "button_validate_" + str(user)),
