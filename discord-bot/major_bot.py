@@ -3,7 +3,7 @@
 """
 Majority Judgment Bar Chart Distribution Discord Bot
 """
-
+import asyncio
 import sys
 import os
 
@@ -38,6 +38,10 @@ RESULTS = {}
 # in memory any button depending on user, 'custom_id' is defined as follows:
 #   custom_id => str(UUID) + "button_" + GRADES[i] + "_" + str(user) + "_" + choice
 BUTTONS = {}
+
+# Keep the original interaction to edit (ephemeral trick)
+# ORIGINAL_INTER {"user1": inter, "user2": inter...}
+ORIGINAL_INTER = {}
 
 # Validations storage allow a global button deactivation
 # Keep in memory [user1, user2 ...]
@@ -106,6 +110,8 @@ async def major_update(inter: disnake.MessageInteraction):
     global CHOICES
     global RESULTS
     global VALIDATIONS
+    global ORIGINAL_INTER
+
     user = inter.author.id
     user_name = inter.author.name
 
@@ -180,25 +186,31 @@ async def major_update(inter: disnake.MessageInteraction):
                         next_choice = CHOICES[c_index + 1]
                     except:
                         logging.info("User %s has finished '%s'", user_name, QUESTION)
-                        await inter.response.send_message(
-                            "Vous avez répondu à toutes les questions, merci pour votre participation !\n\n Résume de vos choix :\n"
+                        await ORIGINAL_INTER[user].edit_original_response(
+                            content="Vous avez répondu à toutes les questions, merci pour votre participation !\n\n Résume de vos choix :\n"
                             + str(RESULTS[user]) + "\n"
                             + "\nCommande pour afficher les résultats : **/major_display**\n"
                             + "\nVoulez-vous valider vos choix ou recommencer le jugement majoritaire ?",
-                            ephemeral=True,
                             components=[disnake.ui.Button(label="Valider", style=disnake.ButtonStyle.success,
                                             custom_id=str(UUID) + "button_validate_" + str(user)),
                                        disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.primary,
                                             custom_id=str(UUID) + "button_reset_" + str(user))]
                         )
+                        await inter.response.defer()
                         return
             break  # do not continue, break loop for the next "choice"
 
     # Display buttons
-    await inter.response.send_message(
-        "Que pensez-vous de **" + next_choice + "** ?",
+    content_msg = "Que pensez-vous de **" + next_choice + "** ?"
+    if ORIGINAL_INTER.get(user) is not None:
+        await ORIGINAL_INTER[user].edit_original_response(content=content_msg, components=BUTTONS[user][next_choice])
+        await inter.response.defer()
+    else:
+        await inter.response.send_message(
+        content_msg,
         ephemeral=True,
         components=BUTTONS[user][next_choice])
+        ORIGINAL_INTER[user] = inter
 
 def dict_to_csv(data, filename="output.csv"):
     # Filter out any entries where a sub-dictionary contains None values
