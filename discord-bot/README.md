@@ -73,15 +73,14 @@ Linux/macOS with `chmod +x major_bot.py`.
 - **Description**: Create a new Majority Judgment (only one at a time is allowed for now)
 - **Options**:
   - *question*: The Majority Judgment purpose
-  - *choices*: The Majority Judgment candidates/choices, separated by a semi-colon (`;`)
+  - *choices*: The Majority Judgment candidates/choices, separated by a semicolon (`;`)
 - **Example**: `/major_create question: The best Discord API choices: JS;Java;Python`
 
 ### /major_display
 - **Description**: Display the current Majority Judgment results
 - **Options**:
   - *visibility*: Display results in a public or private message
-
-- **Example**: `/major_display`
+- **Example**: `/major_display visibilité:privé`
 
 ### /major_delete
 - **Description**: Delete the current Majority Judgment
