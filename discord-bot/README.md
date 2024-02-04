@@ -78,7 +78,9 @@ Linux/macOS with `chmod +x major_bot.py`.
 
 ### /major_display
 - **Description**: Display the current Majority Judgment results
-- **Options**: N/A
+- **Options**:
+  - *visibility*: Display results in a public or private message
+
 - **Example**: `/major_display`
 
 ### /major_delete

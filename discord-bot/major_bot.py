@@ -235,25 +235,33 @@ def dict_to_csv(data, filename="output.csv"):
     logging.info(f"CSV file '{filename}' created successfully.")
 
 @bot.slash_command(description="Affichage des résultats du jugement courant")
-async def major_display(inter):
+async def major_display(inter, visibility: str = commands.Param(name="visibilité", description="Affichage privé ou publique", choices=["privé", "publique"])):
     global GRADES
     global RESULTS
     global CHOICES
     global QUESTION
     user_name = inter.author.name
+
     if not OPENED:
         await inter.response.send_message(
             "Aucun jugement majoritaire n'est actuellement ouvert, veuillez utiliser la commande **/major_create**",
             ephemeral=True,
         )
         return
+
+    # Manage visibility of the results
+    if visibility == "privé":
+        ephemeral = True
+    else:
+        ephemeral = False
+
     csv_file = "major_bot.csv"
     dict_to_csv(RESULTS, csv_file)
     results = mj.read_and_aggregate_csv(csv_file, category_names=GRADES, values_type='str')
     # Remove special chars for Windows files
     png_file = re.sub(r'\W', '_', QUESTION) + '.png'
     mj.survey(results, category_names=GRADES, title=QUESTION, plot=False, display_major=False)
-    await inter.send(file=disnake.File(png_file))
+    await inter.send(file=disnake.File(png_file), ephemeral=ephemeral)
     logging.info("'%s' displayed by user %s", QUESTION, user_name)
 
 @bot.slash_command(description="Suppression du jugement courant")
