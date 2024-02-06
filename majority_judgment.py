@@ -16,7 +16,7 @@ import re
 # Supported values_type : 'int' or 'str'
 def read_and_aggregate_csv(file_path, category_names, ignore_first_column,values_type="int"):
     df = pd.read_csv(file_path)
-    # Deleting the first column of the csv if -i has been called
+    # Deleting the first column of the csv if -I has been called
     if ignore_first_column == True:
         first_column = df.columns[0]
         df = df.drop([first_column], axis=1)
