@@ -14,8 +14,12 @@ import re
 
 
 # Supported values_type : 'int' or 'str'
-def read_and_aggregate_csv(file_path, category_names, values_type="int"):
+def read_and_aggregate_csv(file_path, category_names, ignore_first_column,values_type="int"):
     df = pd.read_csv(file_path)
+    # Deleting the first column of the csv if -i has been called
+    if ignore_first_column == True:
+        first_column = df.columns[0]
+        df = df.drop([first_column], axis=1)
     max_count = len(category_names)
 
     if values_type == "int":
@@ -223,6 +227,13 @@ Examples of usages:
         action='store_true',
         default=False
     )
+    parser.add_argument(
+        "-I",
+        "--ignore-first-column",
+        help="""Ignores the first column of the csv data.""",
+        action='store_true',
+        default=False
+    )
 
     args = parser.parse_args()
 
@@ -251,5 +262,5 @@ Examples of usages:
     else:
         plot = True
 
-    results = read_and_aggregate_csv(args.csv, category_names, args.type)
+    results = read_and_aggregate_csv(args.csv, category_names, args.ignore_first_column, args.type)
     survey(results, category_names, args.title, not args.disable_major, plot)
