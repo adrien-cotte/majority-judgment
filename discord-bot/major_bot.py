@@ -257,7 +257,7 @@ async def major_display(inter, visibility: str = commands.Param(name="visibilit√
 
     csv_file = "major_bot.csv"
     dict_to_csv(RESULTS, csv_file)
-    results = mj.read_and_aggregate_csv(csv_file, category_names=GRADES, values_type='str')
+    results = mj.read_and_aggregate_csv(csv_file, category_names=GRADES, ignore_first_column=False, values_type='str')
     # Remove special chars for Windows files
     png_file = re.sub(r'\W', '_', QUESTION) + '.png'
     mj.survey(results, category_names=GRADES, title=QUESTION, plot=False, display_major=False)
