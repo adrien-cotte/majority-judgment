@@ -42,6 +42,8 @@ options:
   -p, --png             Write a PNG file instead of plotting results.
   -t TITLE, --title TITLE
                         Title of the chart.
+  -I , --ignore-first-column
+                        Ignores the first column of the csv data                  
   -l {en,fr}, --lang {en,fr}
                         Change the language. (default: "en")
   -T {int,str}, --type {int,str}
