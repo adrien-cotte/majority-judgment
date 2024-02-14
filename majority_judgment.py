@@ -15,7 +15,7 @@ import re
 
 # Supported values_type : 'int' or 'str'
 
-def read_and_aggregate_csv(file_path, category_names, empty_value_filler=3, ignore_first_column=False, values_type="int"):
+def read_and_aggregate_csv(file_path, category_names,ignore_first_column=False, values_type="int", empty_value_filler=3):
 
     df = pd.read_csv(file_path)
     # Deleting the first column of the csv if -I has been called
