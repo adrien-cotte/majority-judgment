@@ -14,7 +14,9 @@ import re
 
 
 # Supported values_type : 'int' or 'str'
-def read_and_aggregate_csv(file_path, category_names, ignore_first_column=False, values_type="int"):
+
+def read_and_aggregate_csv(file_path, category_names,ignore_first_column=False, values_type="int", empty_value_filler=3):
+
     df = pd.read_csv(file_path)
     # Deleting the first column of the csv if -I has been called
     if ignore_first_column == True:
@@ -22,43 +24,72 @@ def read_and_aggregate_csv(file_path, category_names, ignore_first_column=False,
         df = df.drop([first_column], axis=1)
     max_count = len(category_names)
 
-    if values_type == "int":
-        # Function to check if a value is out of the desired range
-        def is_out_of_range(x):
-            return not (1 <= x <= max_count)
 
-        # Check for any value out of range
-        if df.map(is_out_of_range).any().any():
-            print("Warning: There are values not between 1 and", max_count)
+    if values_type == "int":
+        #function to check if there are empty values and fill those values with desired 'filler
+        df = df.fillna(empty_value_filler).astype(int)
+
+        #function to check if values are within desired range
+        for index,row in df.iterrows():
+            for num in row.values:
+                if not 1<=num<=max_count:
+                    print('number outside of range')
+                    print(num)
+                else:
+                    continue
+
+        aggregated_results = {}
+        for question in df.columns:
+            # Adjust to map category names to their indices
+            mapped_df = df[question].replace(
+                {name: i + 1 for i, name in enumerate(category_names)}
+            )
+            counts = df[question].value_counts().sort_index()
+            for rating in range(1, max_count + 1):
+                if rating not in counts:
+                    counts[rating] = 0
+            aggregated_results[question] = counts.sort_index().tolist()
+        return aggregated_results
+
 
     elif values_type == "str":
+        #fucntion to check if there are empty values, and fill those values with desired 'filler'
+        df = df.fillna(empty_value_filler).astype(str)
+        print(df)
+
         # Convert category names to a set for efficient lookup
         category_names_set = set(category_names)
 
-        # Function to check if a value is out of the desired categories
-        def is_out_of_category(x):
-            return not (x in category_names_set)
 
-        # Check for any value out of category
-        if df.map(is_out_of_category).any().any():
-            print("Warning: There are values not in", category_names)
+        # Function to check if a value is out of the desired categories
+        mask = df.isin(category_names_set)
+        rows_with_false = mask[~mask.all(axis=1)]
+        column_with_false = rows_with_false.columns[(~rows_with_false).any()]
+
+        mask1 = mask.all().all()
+        if not mask1.all():
+            print('Values not in desired categories')
+            print(rows_with_false[column_with_false])
+
+        else:
+            aggregated_results = {}
+            for question in df.columns:
+                # Adjust to map category names to their indices
+                mapped_df = df[question].replace(
+                    {name: i + 1 for i, name in enumerate(category_names)}
+                )
+                counts = df[question].value_counts().sort_index()
+                for cat in category_names_set:
+                    if cat not in counts:
+                        counts[cat] = 0
+                aggregated_results[question] = counts.sort_index().tolist()
+        return aggregated_results
+
     else:
         raise Exception(
             "values_type='" + values_type + "' is not supported, try 'int' or 'str'"
         )
 
-    aggregated_results = {}
-    for question in df.columns:
-        # Adjust to map category names to their indices
-        mapped_df = df[question].replace(
-            {name: i + 1 for i, name in enumerate(category_names)}
-        )
-        counts = mapped_df.value_counts().sort_index()
-        for rating in range(1, max_count + 1):
-            if rating not in counts:
-                counts[rating] = 0
-        aggregated_results[question] = counts.sort_index().tolist()
-    return aggregated_results
 
 
 def survey(results, category_names, title, display_major=True, plot=True):
