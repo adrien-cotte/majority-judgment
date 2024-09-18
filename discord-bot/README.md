@@ -8,6 +8,19 @@ support for Discord's interactions API.
 
 This bot is dedicated to https://github.com/adrien-cotte/majority-judgment project.
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Configuration](#configuration)
+- [Setting Up Environment Variables](#setting-up-environment-variables)
+- [Running the Bot](#running-the-bot)
+- [Docker](#Docker)
+- [Commands Usage](#commands-usage)
+- [How to create your first Discord bot](#how-to-create-your-first-discord-bot)
+- [How to invite bot to your Discord server](#how-to-invite-bot-to-your-discord-server)
+- [How to get MAJOR\_BOT\_TOKEN](#how-to-get-major_bot_token)
+- [How to get MAJOR\_BOT\_GUILDS](#how-to-get-major_bot_guilds)
+
 ## Prerequisites
 
 ### Discord bot knowledge
@@ -67,6 +80,30 @@ Navigate to the directory containing `major_bot.py` and run the script:
 
 Ensure that `major_bot.py` is executable. If it's not, you can make it executable on 
 Linux/macOS with `chmod +x major_bot.py`.
+
+## Docker
+
+You can deploy the Majority Judgement Discord bot using Docker for easier setup and consistent environments.
+This section provides instructions on how to build and run the Docker container.
+
+### Building the Docker Image
+
+To build the Docker image, run the following command in the directory containing `discord-bot.Dockerfile`:
+
+```bash
+docker build -f discord-bot.Dockerfile \
+  -e MAJOR_BOT_TOKEN='your_bot_token_here' \
+  -e MAJOR_BOT_GUILDS='your_guild_ids_here' \
+  -t major-bot
+```
+
+This command builds the Docker image and tags it as `major-bot`.
+
+### Running the Docker Container
+
+```bash
+docker run -d major-bot
+```
 
 ## Commands Usage
 
