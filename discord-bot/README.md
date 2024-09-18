@@ -126,7 +126,7 @@ Now, export `MAJOR_BOT_TOKEN` and `MAJOR_BOT_GUILDS` to run `major_bot.py`.
 
 ## How to get MAJOR_BOT_TOKEN
 
-Go to https://discord.com/developers/applications, then Setting -> General Information -> Public Key.
+Go to https://discord.com/developers/applications, then Bot -> Token.
 
 ![alt text](img/discord-bot_token_example.png)
 
