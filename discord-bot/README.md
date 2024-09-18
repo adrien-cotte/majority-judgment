@@ -14,9 +14,10 @@ This bot is dedicated to https://github.com/adrien-cotte/majority-judgment proje
 
 If you are not familiar with a Discord bot management, then here is where you should start: https://discord.com/developers/docs/getting-started
 The following sections can help you too:
+- [How to create your first Discord bot](#how-to-create-your-first-discord-bot)
+- [How to invite bot to your Discord server](#how-to-invite-bot-to-your-discord-server)
 - [How to get MAJOR_BOT_TOKEN](#how-to-get-major_bot_token)
 - [How to get MAJOR_BOT_GUILDS](#how-to-get-major_bot_guilds)
-- [How to invite bot to your Discord server](#how-to-invite-bot-to-your-discord-server)
 
 ### Python modules
 
@@ -87,6 +88,42 @@ Linux/macOS with `chmod +x major_bot.py`.
 - **Options**: N/A
 - **Example**: `/major_delete`
 
+## How to create your first Discord bot
+
+Go to your developper space: https://discord.com/developers/applications
+
+And create a new app.
+
+![alt text](img/discord-bot_new.png)
+![alt text](img/discord-bot_create.png)
+
+Then, go to on OAuth2 -> URL Generator -> bot.
+
+![alt text](img/discord-bot_install.png)
+
+Done, congratulations!
+
+## How to invite bot to your Discord server
+
+Go to your Discord developper space, select your app,
+and click on OAuth2 -> URL Generator -> bot -> Administrator -> Generated URL.
+
+![alt text](img/discord-bot_url_example.png)
+
+Copy this url in your Discord server and click on it:
+
+![alt text](img/discord-bot_link.png)
+
+Continue.
+
+![alt text](img/discord-bot_link_continue.png)
+
+Authorize.
+
+![alt text](img/discord-bot_authorize.png)
+
+Now, export `MAJOR_BOT_TOKEN` and `MAJOR_BOT_GUILDS` to run `major_bot.py`.
+
 ## How to get MAJOR_BOT_TOKEN
 
 Go to https://discord.com/developers/applications, then Setting -> General Information -> Public Key.
@@ -103,9 +140,3 @@ Then, be sure the Developer mode is activated.
 Right-click of your server icon and select `Copy Server ID`.
 
 ![alt text](img/discord-bot_guild_id_example.png)
-
-## How to invite bot to your Discord server
-
-Go to your Discord developers applications, select your bot, then click on OAuth2 -> URL Generator -> bot -> Administrator -> Generated URL.
-
-![alt text](img/discord-bot_url_example.png)
