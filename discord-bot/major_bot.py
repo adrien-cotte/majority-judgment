@@ -66,12 +66,30 @@ else:
 # Initialize your bot with these guilds
 bot = commands.InteractionBot(test_guilds=test_guilds)
 
+bot_is_ready = False
+
+@bot.event
+async def on_ready():
+    global bot_is_ready
+    bot_is_ready = True
+    print(f"Bot is ready. Logged in as {bot.user}")
+
 # The slash command that responds with a message.
 @bot.slash_command(description="Création d'un jugement majoritaire")
 async def major_create(inter: disnake.ApplicationCommandInteraction,
                        question: str = commands.Param(description="Intitulé de la question"),
                        choices: str = commands.Param(description="Choix séparés par un `\";\" (ex : A;B;C)"),
 ):
+
+    if not bot_is_ready:
+        await inter.response.send_message(
+            "Le bot est en cours de démarrage. Veuillez réessayer dans quelques secondes.",
+            ephemeral=True,
+        )
+        return
+
+    await inter.response.defer(ephemeral=False)  # Defer the response to avoid timeouts
+
     global OPENED
     global QUESTION
     global CHOICES
@@ -101,7 +119,7 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
     reset_button = disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.secondary,
                       custom_id=str(UUID) + "button_reset_" + str(user))
 
-    await inter.response.send_message("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
+    await inter.followup.send("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
             components=[participate_button, reset_button])
 
 @bot.listen("on_button_click")
@@ -236,6 +254,7 @@ def dict_to_csv(data, filename="output.csv"):
 
 @bot.slash_command(description="Affichage des résultats du jugement courant")
 async def major_display(inter, visibility: str = commands.Param(name="visibilité", description="Affichage privé ou publique", choices=["privé", "publique"])):
+
     global GRADES
     global RESULTS
     global CHOICES
@@ -254,6 +273,8 @@ async def major_display(inter, visibility: str = commands.Param(name="visibilit�
         ephemeral = True
     else:
         ephemeral = False
+
+    await inter.response.defer(ephemeral=ephemeral)  # Defer the response to avoid timeouts
 
     csv_file = "major_bot.csv"
     dict_to_csv(RESULTS, csv_file)
@@ -292,3 +313,4 @@ if bot_token is None:
 else:
     logging.info("MAJOR_BOT_TOKEN=%s", bot_token)
 bot.run(bot_token)
+
