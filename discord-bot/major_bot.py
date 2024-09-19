@@ -293,6 +293,7 @@ async def major_delete(inter: disnake.ApplicationCommandInteraction):
     global RESULTS
     global BUTTONS
     global VALIDATIONS
+
     user_name = inter.author.name
     logging.info("'%s' has been reset by user %s", QUESTION, user_name)
     OPENED = False
@@ -302,7 +303,13 @@ async def major_delete(inter: disnake.ApplicationCommandInteraction):
     RESULTS = {}
     BUTTONS = {}
     VALIDATIONS = []
-    await inter.response.send_message("INFO: Vous avez supprimé le Jugement Majoritaire intitulé : " + prev_question,
+
+    # defer + asyncio + followup is a workaround do delay Discord 3s timeout
+    # fixes "disnake.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction"
+    # fixes "NotFound: 404 Not Found (error code: 10062): Unknown interaction"
+    await inter.response.defer(ephemeral=True)  # Defer the response to avoid timeouts
+    await asyncio.sleep(1)
+    await inter.followup.send("INFO: Vous avez supprimé le Jugement Majoritaire intitulé : " + prev_question,
                                       ephemeral=True)
 
 # Fetch the bot token from environment variables
