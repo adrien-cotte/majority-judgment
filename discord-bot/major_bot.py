@@ -88,8 +88,6 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
         )
         return
 
-    await inter.response.defer(ephemeral=False)  # Defer the response to avoid timeouts
-
     global OPENED
     global QUESTION
     global CHOICES
@@ -98,6 +96,8 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
     user = inter.author.id
     user_name = inter.author.name
     logging.info("User %s launched /major_create [%s] [%s]", user_name, question, choices)
+
+    await inter.response.defer(ephemeral=False)  # Defer the response to avoid timeouts
 
     if OPENED:
         await inter.response.send_message(
