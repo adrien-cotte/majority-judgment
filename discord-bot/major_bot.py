@@ -67,6 +67,7 @@ else:
 bot = commands.InteractionBot(test_guilds=test_guilds)
 
 bot_is_ready = False
+is_first_creation = True
 
 @bot.event
 async def on_ready():
@@ -88,6 +89,7 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
         )
         return
 
+    global is_first_creation
     global OPENED
     global QUESTION
     global CHOICES
@@ -97,7 +99,8 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
     user_name = inter.author.name
     logging.info("User %s launched /major_create [%s] [%s]", user_name, question, choices)
 
-    await inter.response.defer(ephemeral=False)  # Defer the response to avoid timeouts
+    if not is_first_creation:
+        await inter.response.defer(ephemeral=False)  # Defer the response to avoid timeouts
 
     if OPENED:
         await inter.response.send_message(
@@ -119,8 +122,13 @@ async def major_create(inter: disnake.ApplicationCommandInteraction,
     reset_button = disnake.ui.Button(label="Recommencer", style=disnake.ButtonStyle.secondary,
                       custom_id=str(UUID) + "button_reset_" + str(user))
 
-    await inter.followup.send("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
+    if not is_first_creation:
+        await inter.followup.send("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
             components=[participate_button, reset_button])
+    else:
+        await inter.response.send_message("Un nouveau jugement majoritaire est créé, cliquez sur le bouton ci-dessous pour participer !",
+            components=[participate_button, reset_button])
+        is_first_creation = False
 
 @bot.listen("on_button_click")
 async def major_update(inter: disnake.MessageInteraction):
